@@ -21,6 +21,15 @@ pipeline{
                 sh "docker tag ${PROJECT_NAME}:${BRANCH} ${REGISTRY}/${PROJECT_NAME}:${COMMIT}"
             }
         }
+        stage('\u2600 Login') {
+            steps{
+                echo "******************* '${STAGE_NAME}' ... ******************"
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'docker',
+                                usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                                sh 'docker login --username=$USERNAME --password=$PASSWORD'
+                        }            
+                }
+        }
         stage('\u2600 Publish') {
             steps{
                 echo "******************* '${STAGE_NAME}' ... ******************"
