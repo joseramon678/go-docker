@@ -18,17 +18,17 @@ pipeline{
         stage('\u2600 Tagging') {
             steps{
                 echo "******************* '${STAGE_NAME}' ... ******************"
-                sh "docker tag :${BRANCH} ${REGISTRY}/${NAME}:${COMMIT}"
+                sh "docker tag :${BRANCH} ${REGISTRY}/${PROJECT_NAME}:${COMMIT}"
             }
         }
         stage('\u2600 Publish') {
             steps{
                 echo "******************* '${STAGE_NAME}' ... ******************"
-                sh "docker push ${REGISTRY}/${NAME}:${COMMIT}"
+                sh "docker push ${REGISTRY}/${PROJECT_NAME}:${COMMIT}"
             }
         }
     }
-    
+
     post{
         always{
             echo "==============="
