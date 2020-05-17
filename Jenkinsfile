@@ -18,7 +18,7 @@ pipeline{
         stage('\u2600 Tagging') {
             steps{
                 echo "******************* '${STAGE_NAME}' ... ******************"
-                sh "docker tag :${BRANCH} ${REGISTRY}/${PROJECT_NAME}:${COMMIT}"
+                sh "docker tag ${PROJECT_NAME}:${BRANCH} ${REGISTRY}/${PROJECT_NAME}:${COMMIT}"
             }
         }
         stage('\u2600 Publish') {
