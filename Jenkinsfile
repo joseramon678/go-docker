@@ -33,8 +33,7 @@ pipeline{
                 sh "docker push ${REGISTRY}/${NAME}:${COMMIT}"
             }
         }
-    
-    
+    }
     post{
         always{
             echo "========always========"
