@@ -9,22 +9,16 @@ pipeline{
             REGISTRY = "jrmanes"
     }
     stages{
-        stage('\u2600 Checkout') {
-            steps{
-                echo "******************* '${STAGE_NAME}' ... ******************"
-                checkout scm
-            }
-        }
         stage('\u2600 Build') {
             steps{
                 echo "******************* '${STAGE_NAME}' ... ******************"
-                sh "docker build -t ${PROJECT_NAME}:${envBranch} ."
+                sh "docker build -t ${PROJECT_NAME}:${BRANCH} ."
             }
         }
         stage('\u2600 Tagging') {
             steps{
                 echo "******************* '${STAGE_NAME}' ... ******************"
-                sh "docker tag ${NAME}:${envBranch} ${REGISTRY}/${NAME}:${COMMIT}"
+                sh "docker tag :${BRANCH} ${REGISTRY}/${NAME}:${COMMIT}"
             }
         }
         stage('\u2600 Publish') {
@@ -36,7 +30,12 @@ pipeline{
     }
     post{
         always{
-            echo "========always========"
+            echo "==============="
+            echo "${PROJECT_NAME}"
+            echo "${COMMIT}"
+            echo "${BRANCH}"
+            echo "${REGISTRY}"
+            echo "==============="
         }
         success{
             echo "========pipeline executed successfully ========"
