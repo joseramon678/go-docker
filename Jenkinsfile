@@ -2,9 +2,6 @@ pipeline{
     agent{
         label "jenkins-slave-docker"
     }
-    triggers {
-        githubPush()
-    }
     environment {
             PROJECT_NAME = "letsgo"
             COMMIT = sh (script: "git rev-parse --short HEAD", returnStdout: true)
@@ -28,9 +25,9 @@ pipeline{
             steps{
                 echo "******************* '${STAGE_NAME}' ... ******************"
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'docker',
-                                usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                                sh 'docker login --username=$USERNAME --password=$PASSWORD'
-                        }            
+                            usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                            sh 'docker login --username=$USERNAME --password=$PASSWORD'
+                        }
                 }
         }
         stage('\u2600 Publish') {
@@ -39,8 +36,21 @@ pipeline{
                 sh "docker push ${REGISTRY}/${PROJECT_NAME}:${COMMIT}"
             }
         }
-    }
+        stage('\u2600 Deployment') {
+            steps{
+                echo "******************* '${STAGE_NAME}' ... ******************"
+                echo '**********************************************************'
+                echo '********************* Kubernetes *************************'
+                echo '**********************************************************'
+                script {
+                    def envBranch = getBranchName()
+                    callMigraCF(envBranch)
+                }
+            }
+        }
 
+        
+    }
     post{
         always{
             echo "==============="
@@ -57,4 +67,33 @@ pipeline{
             echo "========pipeline execution failed========"
         }
     }
+}
+
+////////////////////////////////////
+// Functions
+////////////////////////////////////
+def getBranchName(){
+    def branchName = env.BRANCH_NAME
+    echo "The trimBranchName value recived is: ${branchName}"
+    switch(branchName) {
+        case "develop":
+            branchName = "dev"
+            break
+        case "master":
+            branchName = "prod"
+            break
+        default:
+            branchName = "testing"
+            break
+    }
+    return branchName 
+}
+
+def callJob(String branch, String jobname) {
+    build job: 'LetsGo_K8S',
+        parameters: [
+            string(name: 'environment', value: String.valueOf(branch)),
+            string(name: 'project_name', value: String.valueOf(env.PROJECT_NAME)),
+            string(name: 'docker_commit', value: String.valueOf(env.COMMIT))
+        ]
 }

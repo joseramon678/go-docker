@@ -1,0 +1,70 @@
+pipeline {
+    agent any
+    environment {
+        BRANCH = "${params.environment}"
+        PROJECT_NAME = "${params.project_name}"
+        DOCKER_COMIT = "${params.docker_commit[0..6]}" // Name that we use to refer the container image
+    }
+    stages {
+            stage('PrintCommit') {
+                steps {
+                    echo '**********************************************************'
+                    echo '********************* Commit ... *********************'
+                    echo '**********************************************************'
+                    print "${params.docker_commit[0..7]}"
+                    print "${params.environment}"
+                    echo '**********************************************************'
+                }
+            }
+            stage('Replace Commit'){
+                steps {
+                        sh "sed -i s/GIT_COMMIT/${env.DOCKER_COMIT}/g ./*.yaml && cat ./*.yaml"
+                }
+            }
+            stage('Replace Environment'){
+                steps {
+                        //def branch = getBranchName()
+                        sh "sed -i s/ENVIRONMENT/${env.BRANCH}/g ./*.yaml && cat ./*.yaml"
+                }
+            }
+            stage('Deploying to Kubernetes'){
+                steps {
+                        sh "kubectl apply -f ."
+                }
+            }
+        }
+        post {
+            always {
+                cleanWs()
+            }
+            success {
+                echo "========pipeline executed successfully ========"
+            }
+            unstable {
+                echo "========pipeline execution failed========"
+            }
+            failure {
+                echo "========pipeline execution failed========"
+            }
+        }
+}
+////////////////////////////////////
+// Functions
+////////////////////////////////////
+def getBranchName(){
+    def branchName = env.BRANCH
+
+    switch(branchName) {
+        case "develop":
+            branchName = "dev"
+            break
+        case "prod":
+            branchName = "prod"
+            break
+        default:
+            branchName = "testing"
+            break
+    }
+    echo "The trimBranchName value recived is: ${branchName}"
+    return branchName
+}
