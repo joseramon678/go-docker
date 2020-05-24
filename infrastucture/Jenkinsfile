@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'gcr.io/cloud-builders/kubectl' }
+    }  
     environment {
         BRANCH = "${params.environment}"
         PROJECT_NAME = "${params.project_name}"
