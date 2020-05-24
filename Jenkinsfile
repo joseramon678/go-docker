@@ -88,7 +88,7 @@ def getBranchName(){
     return branchName 
 }
 
-def callJob(String branch, String jobname) {
+def callJob(String branch) {
     build job: 'LetsGo_K8S',
         parameters: [
             string(name: 'environment', value: String.valueOf(branch)),
