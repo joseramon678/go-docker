@@ -35,7 +35,7 @@ pipeline {
         }
         post {
             always {
-                cleanWs()
+                echo "========pipeline executed ========"
             }
             success {
                 echo "========pipeline executed successfully ========"
