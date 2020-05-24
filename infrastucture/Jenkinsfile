@@ -28,7 +28,10 @@ pipeline {
                         // kubectl apply -f 00-NS.yaml &&\
                         // kubectl apply -f 03-DEPLOYMENT.yaml &&\
                         // kubectl apply -f ."
-                        kubernetesDeploy(configs: "./infrastucture/00-NS..yaml", kubeconfigId: "jenkins-k8s-auth")
+                            withKubeConfig([credentialsId: 'jenkins-k8s-auth', serverUrl: 'https://kubernetes.default' ]) {
+                        //kubernetesDeploy(configs: "./infrastucture/00-NS..yaml", kubeconfigId: "jenkins-k8s-auth")
+                               sh 'kubectl apply -f ./infrastucture/00-NS..yaml'
+                            }
                 }
 
             }
