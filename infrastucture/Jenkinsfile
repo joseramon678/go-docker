@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        docker { image 'gcr.io/cloud-builders/kubectl' }
+        label "jenkins-slave-kubectl"
     }  
     environment {
         BRANCH = "${params.environment}"
