@@ -32,7 +32,7 @@ pipeline {
             }
             stage('Deploying to Kubernetes'){
                 steps {
-                        sh "kubectl apply -f ."
+                        sh "cd ./infrastucture && kubectl apply -f ."
                 }
             }
         }
