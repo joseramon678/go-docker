@@ -25,7 +25,7 @@ pipeline {
             stage('Replace Environment'){
                 steps {
                         //def branch = getBranchName()
-                        sh "sed -i s/ENVIRONMENT/${env.BRANCH}/g ./*.yaml && cat ./*.yaml"
+                        sh "sed -i s/ENVIRONMENT/${env.BRANCH}/g ./infrastucture/*.yaml && cat ./infrastucture/*.yaml"
                 }
             }
             stage('Deploying to Kubernetes'){
