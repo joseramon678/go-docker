@@ -2,6 +2,9 @@ pipeline{
     agent{
         label "jenkins-slave-docker"
     }
+    triggers {
+        githubPush()
+    }
     environment {
             PROJECT_NAME = "letsgo"
             COMMIT = sh (script: "git rev-parse --short HEAD", returnStdout: true)
