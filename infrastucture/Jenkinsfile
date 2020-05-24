@@ -29,7 +29,7 @@ pipeline {
                         // kubectl apply -f 03-DEPLOYMENT.yaml &&\
                         // kubectl apply -f ."
                             //withKubeConfig([credentialsId: 'clusterk8sconfi	', serverUrl: 'https://kubernetes.default' ]) {
-                            withKubeConfig([credentialsId: 'clusterk8sconfig' ]) {
+                            withKubeConfig([credentialsId: 'clusterk8sconfig', serverUrl: 'https://kubernetes.default'  ]) {
                         //kubernetesDeploy(configs: "./infrastucture/00-NS..yaml", kubeconfigId: "jenkins-k8s-auth")
                                sh 'kubectl apply -f ./infrastucture/*.yaml'
                             }
