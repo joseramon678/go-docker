@@ -44,7 +44,7 @@ pipeline{
                 echo '**********************************************************'
                 script {
                     def envBranch = getBranchName()
-                    callMigraCF(envBranch)
+                    callJob(envBranch)
                 }
             }
         }
