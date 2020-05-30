@@ -1,7 +1,14 @@
 pipeline {
-    agent {
-        label "jenkins-slave-kubectl"
-    }  
+    // agent {
+    //     label "jenkins-slave-kubectl"
+    // }  
+      agent {
+        kubernetes {
+        label 'jenkins-slave'
+        defaultContainer 'jenkins-slave'
+        yaml getAgent()
+        }
+    }
     environment {
         BRANCH = "${params.environment}"
         PROJECT_NAME = "${params.project_name}"
@@ -51,4 +58,38 @@ pipeline {
                 echo "========pipeline execution failed========"
             }
         }
+}
+
+
+def call(){
+agent =  """
+  apiVersion: v1
+  kind: Pod
+  metadata:
+   labels:
+    name: jenkins-slave
+   spec:
+     # Use service account that can deploy to all namespaces
+     serviceAccountName: cd-jenkins
+     containers:
+     - name: docker
+       image: jrmanes/jenkins-slave-docker:latest
+       workingDir: /home/jenkins
+       volumeMounts:
+       - name: docker-sock-volume
+         mountPath: /var/run/docker.sock
+       command:
+       - cat
+         tty: true
+       volumes:
+       - name: docker-sock-volume
+         hostPath:
+         path: /var/run/docker.sock
+      - name: kubectl
+        image: gcr.io/cloud-builders/kubectl
+        command:
+        - cat
+        tty: true
+"""
+return agent
 }
