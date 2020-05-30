@@ -80,7 +80,7 @@ spec:
       mountPath: /var/run/docker.sock
     command:
     - cat
-      tty: true
+    tty: true
     volumes:
     - name: docker-sock-volume
       hostPath:
@@ -89,17 +89,17 @@ spec:
     image: golang:1.10
     command:
     - cat
-      tty: true
+    tty: true
   - name: gcloud
     image: gcr.io/cloud-builders/gcloud
     command:
     - cat
-      tty: true
+    tty: true
   - name: kubectl
     image: gcr.io/cloud-builders/kubectl
     command:
     - cat
-      tty: true
+    tty: true
 """
 return agent
 }
