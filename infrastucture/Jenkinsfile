@@ -77,7 +77,7 @@ spec:
     workingDir: /home/jenkins
     volumeMounts:
     - name: docker-sock-volume
-        mountPath: /var/run/docker.sock
+      mountPath: /var/run/docker.sock
     command:
     - cat
     tty: true
