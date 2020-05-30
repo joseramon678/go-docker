@@ -44,7 +44,7 @@ pipeline {
 
             }
         }
-        post {
+          post {
             always {
                 echo "========pipeline executed ========"
             }
@@ -80,55 +80,26 @@ spec:
       mountPath: /var/run/docker.sock
     command:
     - cat
-    tty: true
+      tty: true
     volumes:
     - name: docker-sock-volume
-        hostPath:
-        path: /var/run/docker.sock
+      hostPath:
+      path: /var/run/docker.sock
   - name: golang
     image: golang:1.10
     command:
     - cat
-    tty: true
+      tty: true
   - name: gcloud
     image: gcr.io/cloud-builders/gcloud
     command:
     - cat
-    tty: true
+      tty: true
   - name: kubectl
     image: gcr.io/cloud-builders/kubectl
     command:
     - cat
-    tty: true
-
-
-  apiVersion: v1
-  kind: Pod
-  metadata:
-   labels:
-    name: jenkins-slave
-   spec:
-     # Use service account that can deploy to all namespaces
-     serviceAccountName: cd-jenkins
-     containers:
-     - name: docker
-       image: jrmanes/jenkins-slave-docker:latest
-       workingDir: /home/jenkins
-       volumeMounts:
-       - name: docker-sock-volume
-         mountPath: /var/run/docker.sock
-       command:
-       - cat
-         tty: true
-       volumes:
-       - name: docker-sock-volume
-         hostPath:
-         path: /var/run/docker.sock
-      - name: kubectl
-        image: gcr.io/cloud-builders/kubectl
-        command:
-        - cat
-        tty: true
+      tty: true
 """
 return agent
 }
