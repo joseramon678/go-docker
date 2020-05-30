@@ -5,7 +5,7 @@ pipeline {
       agent {
         kubernetes {
         label 'jenkins-slave'
-        defaultContainer 'jenkins-slave'
+        defaultContainer 'jnlp'
         yaml getAgent()
         }
     }
@@ -36,10 +36,17 @@ pipeline {
                         // kubectl apply -f 03-DEPLOYMENT.yaml &&\
                         // kubectl apply -f ."
                             //withKubeConfig([credentialsId: 'clusterk8sconfi	', serverUrl: 'https://kubernetes.default' ]) {
-                            withKubeConfig([credentialsId: 'clusterk8sconfig', serverUrl: 'https://kubernetes.default'  ]) {
+                            //withKubeConfig([credentialsId: 'clusterk8sconfig', serverUrl: 'https://kubernetes.default'  ]) {
                         //kubernetesDeploy(configs: "./infrastucture/00-NS..yaml", kubeconfigId: "jenkins-k8s-auth")
-                               sh 'kubectl apply -f ./infrastucture/*.yaml'
-                            }
+                             //  sh 'kubectl apply -f ./infrastucture/*.yaml'
+                            //}
+
+                        container('kubectl') {
+                        // Change deployed image in canary to the one we just built
+                        //step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
+                            //sh 'kubectl apply -f ./infrastucture/*.yaml'
+                            sh 'kubectl apply -f ./infrastucture/00-NS.yaml'
+                        }
                 }
 
             }
