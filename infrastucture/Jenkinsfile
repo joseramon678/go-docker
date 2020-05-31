@@ -1,42 +1,10 @@
 pipeline {
-    // agent {
-    //     label "jenkins-slave-kubectl"
-    // }  
       agent {
-        //kubernetes {
-         // yamlFile getAgent()      
-        //}
         kubernetes {
-      label "jenkins-slave-kubectl"
-      defaultContainer 'jnlp'
-      yaml """
-apiVersion: v1
-kind: Pod
-metadata:
-labels:
-  name: jenkins-slave
-spec:
-  # Use service account that can deploy to all namespaces
-  serviceAccountName: jenkins
-  containers:
-  - name: golang
-    image: golang:1.10
-    command:
-    - cat
-    tty: true
-  - name: gcloud
-    image: gcr.io/cloud-builders/gcloud
-    command:
-    - cat
-    tty: true
-  - name: kubectl
-    image: gcr.io/cloud-builders/kubectl
-    command:
-    - cat
-    tty: true
-"""
-}
-
+        label "jenkins-slave-kubectl"
+        defaultContainer 'jnlp'
+        yaml getAgent()
+      }
     }
     environment {
         BRANCH = "${params.environment}"
@@ -62,21 +30,13 @@ spec:
                 }
             }
             stage('Deploying to Kubernetes'){
-                      agent {
-            kubernetes {
-                label 'nested-pod'
-                yaml """
-spec:
-  containers:
-  - name: kubectl
-    image: gcr.io/cloud-builders/kubectl
-    command:
-    - cat
-    tty: true
-"""
+            agent {
+              kubernetes {
+                  label 'nested-pod'
+                  yaml getK8SAgent()
+              }
             }
-        }
-                steps {
+              steps {
                         // sh "cd ./infrastucture &&\
                         // ls -lia &&\
                         // kubectl apply -f 00-NS.yaml &&\
@@ -87,15 +47,12 @@ spec:
                         //kubernetesDeploy(configs: "./infrastucture/00-NS..yaml", kubeconfigId: "jenkins-k8s-auth")
                              //  sh 'kubectl apply -f ./infrastucture/*.yaml'
                             //}
-
                         container('kubectl') {
                         // Change deployed image in canary to the one we just built
                         //step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
-                            //sh 'kubectl apply -f ./infrastucture/*.yaml'
-                            sh 'kubectl apply -f ./infrastucture/00-NS.yaml'
+                             sh 'kubectl apply -f ./infrastucture/*.yaml'
                         }
                 }
-
             }
         }
           post {
@@ -113,7 +70,6 @@ spec:
             }
         }
 }
-
 
 def getAgent(){
 agent =  """
@@ -149,6 +105,19 @@ spec:
     command:
     - cat
     tty: true
+  - name: kubectl
+    image: gcr.io/cloud-builders/kubectl
+    command:
+    - cat
+    tty: true
+"""
+return agent
+}
+
+def getK8SAgent(){
+agent =  """  
+spec:
+  containers:
   - name: kubectl
     image: gcr.io/cloud-builders/kubectl
     command:
