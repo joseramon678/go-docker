@@ -7,7 +7,7 @@ pipeline {
          // yamlFile getAgent()      
         //}
         kubernetes {
-      label 'nested-pod'
+      label "jenkins-slave-kubectl"
       defaultContainer 'jnlp'
       yaml """
 apiVersion: v1
