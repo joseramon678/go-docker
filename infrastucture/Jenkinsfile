@@ -33,7 +33,15 @@ pipeline {
             agent {
               kubernetes {
                   label 'nested-pod'
-                  yaml getK8SAgent()
+                  yaml   """  
+spec:
+  containers:
+  - name: kubectl
+    image: gcr.io/cloud-builders/kubectl
+    command:
+    - cat
+    tty: true
+"""
               }
             }
               steps {
