@@ -45,20 +45,11 @@ spec:
               }
             }
               steps {
-                        // sh "cd ./infrastucture &&\
-                        // ls -lia &&\
-                        // kubectl apply -f 00-NS.yaml &&\
-                        // kubectl apply -f 03-DEPLOYMENT.yaml &&\
-                        // kubectl apply -f ."
-                            //withKubeConfig([credentialsId: 'clusterk8sconfi	', serverUrl: 'https://kubernetes.default' ]) {
-                            //withKubeConfig([credentialsId: 'clusterk8sconfig', serverUrl: 'https://kubernetes.default'  ]) {
-                        //kubernetesDeploy(configs: "./infrastucture/00-NS..yaml", kubeconfigId: "jenkins-k8s-auth")
-                             //  sh 'kubectl apply -f ./infrastucture/*.yaml'
-                            //}
+                       sh "cd ./infrastucture &&\
+                        ls -lia"
                         container('kubectl') {
                         // Change deployed image in canary to the one we just built
-                        //step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
-                             sh 'kubectl apply -f ./infrastucture/*.yaml'
+                             sh 'kubectl apply -f 00-NS.yaml && kubectl apply -f 03-DEPLOYMENT.yaml'
                         }
                 }
             }
