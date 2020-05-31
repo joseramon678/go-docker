@@ -7,7 +7,7 @@ pipeline {
          // yamlFile getAgent()      
         //}
         kubernetes {
-      label 'jenkins-slave'
+      label 'nested-pod'
       defaultContainer 'jnlp'
       yaml """
 apiVersion: v1
@@ -41,7 +41,7 @@ spec:
     environment {
         BRANCH = "${params.environment}"
         PROJECT_NAME = "${params.project_name}"
-        DOCKER_COMIT = "${params.docker_commit[0..6]}" // Name that we use to refer the container image
+        DOCKER_COMMIT = "${params.docker_commit[0..6]}" // Name that we use to refer the container image
     }
     stages {
             stage('Checkout') {
@@ -57,7 +57,7 @@ spec:
             }
             stage('Replace Commit & Environment'){
                 steps {
-                        sh "sed -i s/GIT_COMMIT/${env.DOCKER_COMIT}/g ./infrastucture/*.yaml && cat ./infrastucture/*.yaml"
+                        sh "sed -i s/GIT_COMMIT/${env.DOCKER_COMMIT}/g ./infrastucture/*.yaml && cat ./infrastucture/*.yaml"
                         sh "sed -i s/ENVIRONMENT/${env.BRANCH}/g ./infrastucture/*.yaml && cat ./infrastucture/*.yaml"
                 }
             }
