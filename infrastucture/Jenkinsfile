@@ -32,7 +32,8 @@ pipeline {
             stage('Deploying to Kubernetes'){
             agent {
               kubernetes {
-                  label 'nested-pod'
+                  //label 'nested-pod'
+                  label "jenkins-slave-kubectl"
                   yaml   """  
 spec:
   containers:
@@ -49,7 +50,7 @@ spec:
                         ls -lia"
                         container('kubectl') {
                         // Change deployed image in canary to the one we just built
-                             sh 'cd ./infrastucture && kubectl apply -f 00-NS.yaml && kubectl apply -f 03-DEPLOYMENT.yaml'
+                             sh 'cd ./infrastucture &&  kubectl apply -f .'
                         }
                 }
             }
