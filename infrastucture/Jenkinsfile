@@ -7,13 +7,14 @@ pipeline {
          // yamlFile getAgent()      
         //}
         kubernetes {
+      label 'jenkins-slave'
       defaultContainer 'jnlp'
       yaml """
 apiVersion: v1
 kind: Pod
 metadata:
 labels:
-  component: ci
+  name: jenkins-slave
 spec:
   # Use service account that can deploy to all namespaces
   serviceAccountName: cd-jenkins
