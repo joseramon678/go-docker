@@ -3,11 +3,40 @@ pipeline {
     //     label "jenkins-slave-kubectl"
     // }  
       agent {
+        //kubernetes {
+         // yamlFile getAgent()      
+        //}
         kubernetes {
-        label 'jenkins-slave-kubernetes'
-        defaultContainer 'jnlp'
-        yaml getAgent()
-        }
+      label 'sample-app'
+      defaultContainer 'jnlp'
+      yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+labels:
+  component: ci
+spec:
+  # Use service account that can deploy to all namespaces
+  serviceAccountName: cd-jenkins
+  containers:
+  - name: golang
+    image: golang:1.10
+    command:
+    - cat
+    tty: true
+  - name: gcloud
+    image: gcr.io/cloud-builders/gcloud
+    command:
+    - cat
+    tty: true
+  - name: kubectl
+    image: gcr.io/cloud-builders/kubectl
+    command:
+    - cat
+    tty: true
+"""
+}
+
     }
     environment {
         BRANCH = "${params.environment}"
@@ -15,6 +44,11 @@ pipeline {
         DOCKER_COMIT = "${params.docker_commit[0..6]}" // Name that we use to refer the container image
     }
     stages {
+            stage('Checkout') {
+                steps {
+                    checkout scm
+                }
+            }
             stage('PrintCommit') {
                 steps {
                     print "${params.docker_commit[0..7]}"
@@ -27,8 +61,21 @@ pipeline {
                         sh "sed -i s/ENVIRONMENT/${env.BRANCH}/g ./infrastucture/*.yaml && cat ./infrastucture/*.yaml"
                 }
             }
-
             stage('Deploying to Kubernetes'){
+                      agent {
+            kubernetes {
+                label 'nested-pod'
+                yaml """
+spec:
+  containers:
+  - name: kubectl
+    image: gcr.io/cloud-builders/kubectl
+    command:
+    - cat
+    tty: true
+"""
+            }
+        }
                 steps {
                         // sh "cd ./infrastucture &&\
                         // ls -lia &&\
@@ -74,7 +121,7 @@ apiVersion: v1
 kind: Pod
 metadata:
 labels:
-  name: jenkins-slave-kubernetes
+  name: jenkins-slave
 spec:
   # Use service account that can deploy to all namespaces
   serviceAccountName: cd-jenkins
