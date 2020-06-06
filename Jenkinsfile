@@ -79,11 +79,6 @@ pipeline{
     post{
         always{
             echo "==============="
-            echo "${PROJECT_NAME}"
-            echo "${COMMIT}"
-            echo "${BRANCH}"
-            echo "${REGISTRY}"
-            echo "==============="
         }
         success{
             echo "========pipeline executed successfully ========"
