@@ -49,7 +49,7 @@ pipeline {
               steps {
                        sh "cd ./infrastucture &&\
                         ls -lia"
-                        container('kubectl') {
+                        container('jnlp') {
                         // Change deployed image in canary to the one we just built
                              sh 'cd ./infrastucture &&  kubectl apply -f .'
                         }
