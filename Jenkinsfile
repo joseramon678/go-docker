@@ -36,12 +36,9 @@ pipeline{
                 sh "docker push ${REGISTRY}/${PROJECT_NAME}:${COMMIT}"
             }
         }
-        stage('\u2600 Deployment') {
+        stage('\u2600 Kubernetes Deployment') {
             steps{
                 echo "******************* '${STAGE_NAME}' ... ******************"
-                echo '**********************************************************'
-                echo '********************* Kubernetes *************************'
-                echo '**********************************************************'
                 script {
                     def envBranch = getBranchName()
                     callJob(envBranch)

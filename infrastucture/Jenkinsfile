@@ -33,17 +33,17 @@ pipeline {
             agent {
               kubernetes {
                   //label 'nested-pod'
-                  
+
                   label "jenkins-slave-kubectl"
-                  yaml   """  
-spec:
-  containers:
-  - name: kubectl
-    image: gcr.io/cloud-builders/kubectl
-    command:
-    - cat
-    tty: true
-"""
+//                   yaml   """  
+// spec:
+//   containers:
+//   - name: kubectl
+//     image: gcr.io/cloud-builders/kubectl
+//     command:
+//     - cat
+//     tty: true
+// """
               }
             }
               steps {
