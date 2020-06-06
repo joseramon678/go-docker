@@ -33,6 +33,7 @@ pipeline {
             agent {
               kubernetes {
                   //label 'nested-pod'
+                  
                   label "jenkins-slave-kubectl"
                   yaml   """  
 spec:
