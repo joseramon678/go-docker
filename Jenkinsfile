@@ -1,6 +1,13 @@
 pipeline{
-    agent{
+    // agent{
+    //     label "jenkins-slave-docker"
+    // }
+    agent {
+        kubernetes {
         label "jenkins-slave-docker"
+        defaultContainer 'docker'
+        yaml getAgent()
+      }
     }
     environment {
             PROJECT_NAME = "letsgo"
@@ -12,7 +19,9 @@ pipeline{
         stage('\u2600 Build') {
             steps{
                 echo "******************* '${STAGE_NAME}' ... ******************"
-                sh "docker build -t ${PROJECT_NAME}:${BRANCH} ."
+                container('docker') {
+                    sh "docker build -t ${PROJECT_NAME}:${BRANCH} ."
+                }
             }
         }
         stage('\u2600 Tagging') {
@@ -92,4 +101,34 @@ def callJob(String branch) {
             string(name: 'project_name', value: String.valueOf(env.PROJECT_NAME)),
             string(name: 'docker_commit', value: String.valueOf(env.COMMIT))
         ]
+}
+
+
+def getAgent(){
+agent =  """
+apiVersion: v1
+kind: Pod
+metadata:
+labels:
+  #name: jenkins-slave-docker
+  component: ci
+spec:
+  # Use service account that can deploy to all namespaces
+  serviceAccountName: jenkins
+  containers:
+  - name: docker
+    image: jrmanes/jenkins-slave-docker:latest
+    workingDir: /home/jenkins
+    volumeMounts:
+    - name: docker-sock-volume
+      mountPath: /var/run/docker.sock
+    command:
+    - cat
+    tty: true
+    volumes:
+    - name: docker-sock-volume
+      hostPath:
+      path: /var/run/docker.sock
+"""
+return agent
 }
