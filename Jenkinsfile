@@ -2,46 +2,45 @@ pipeline{
     // agent{
     //     label "jenkins-slave-docker"
     // }
-  agent {
-    kubernetes {
-      label mylabel
-      defaultContainer "docker"
-      yaml """
-        apiVersion: v1
-        kind: Pod
-        metadata:
-        labels:
-          component: ci
-        spec:
-          containers:
-          - name: docker
-            image: jrmanes/jenkins-slave-docker:latest
-            command:
-            - cat
-            tty: true
-            resources:
-              limits:
-                cpu: 100m
-                memory: 600Mi
-              requests:
-                cpu: 100m
-                memory: 300Mi
-      """
-    }
-  }
     environment {
-            PROJECT_NAME = "letsgo"
-            COMMIT = sh (script: "git rev-parse --short HEAD", returnStdout: true)
-            BRANCH = "${env.BRANCH_NAME}"
-            REGISTRY = "jrmanes"
+        PROJECT_NAME = "letsgo"
+        COMMIT = sh (script: "git rev-parse --short HEAD", returnStdout: true)
+        BRANCH = "${env.BRANCH_NAME}"
+        REGISTRY = "jrmanes"
     }
+  agent {
+        kubernetes {
+            label mylabel
+            defaultContainer "docker"
+            yaml """
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                labels:
+                component: ci
+                spec:
+                containers:
+                - name: docker
+                    image: jrmanes/jenkins-slave-docker:latest
+                    command:
+                    - cat
+                    tty: true
+                    resources:
+                    limits:
+                        cpu: 100m
+                        memory: 600Mi
+                    requests:
+                        cpu: 100m
+                        memory: 300Mi
+        """
+        }
+  }
+
     stages{
         stage('\u2600 Build') {
             steps{
                 echo "******************* '${STAGE_NAME}' ... ******************"
-                container('docker') {
                     sh "docker build -t ${PROJECT_NAME}:${BRANCH} ."
-                }
             }
         }
         stage('\u2600 Tagging') {
