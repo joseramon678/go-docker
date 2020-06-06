@@ -51,7 +51,8 @@ pipeline {
                         ls -lia"
                         container('jnlp') {
                         // Change deployed image in canary to the one we just built
-                             sh 'cd ./infrastucture &&  kubectl apply -f .'
+                             //sh 'cd ./infrastucture && ls -lia &&  kubectl apply -f .'
+                             sh 'cd ./infrastucture && ls -lia &&  kubectl apply -f 00-NS.yaml'
                         }
                 }
             }
