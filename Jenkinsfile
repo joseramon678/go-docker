@@ -2,13 +2,33 @@ pipeline{
     // agent{
     //     label "jenkins-slave-docker"
     // }
-    agent {
-        kubernetes {
-        label "jenkins-slave-docker"
-        defaultContainer 'docker'
-        yaml getAgent()
-      }
+  agent {
+    kubernetes {
+      label mylabel
+      defaultContainer 'docker'
+      yaml """
+        apiVersion: v1
+        kind: Pod
+        metadata:
+        labels:
+          component: ci
+        spec:
+          containers:
+          - name: docker
+            image: jrmanes/jenkins-slave-docker:latest
+            command:
+            - cat
+            tty: true
+            resources:
+              limits:
+                cpu: 100m
+                memory: 600Mi
+              requests:
+                cpu: 100m
+                memory: 300Mi
+      """
     }
+  }
     environment {
             PROJECT_NAME = "letsgo"
             COMMIT = sh (script: "git rev-parse --short HEAD", returnStdout: true)
