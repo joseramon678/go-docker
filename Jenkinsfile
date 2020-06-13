@@ -10,6 +10,7 @@ pipeline{
     }
   agent {
         kubernetes {
+            label "jenkins-slave2"
             defaultContainer "docker"
             yaml getAgent()
         }
@@ -101,7 +102,7 @@ apiVersion: v1
 kind: Pod
 metadata:
 labels:
-  name: jenkins-slave
+  name: jenkins-slave2
 spec:
   # Use service account that can deploy to all namespaces
   serviceAccountName: jenkins
