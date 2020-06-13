@@ -1,9 +1,9 @@
 pipeline {
       agent {
         kubernetes {
-        label "jenkins-slave-kubectl"
-        defaultContainer 'jnlp'
-        yaml getAgent()
+            label "jenkins-slave-kubectl"
+            defaultContainer 'jnlp'
+            yaml getAgent()
       }
     }
     environment {

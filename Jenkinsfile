@@ -35,7 +35,6 @@ pipeline{
         """
         }
   }
-
     stages{
         stage('\u2600 Build') {
             steps{
