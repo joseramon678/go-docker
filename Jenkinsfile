@@ -10,7 +10,6 @@ pipeline{
     }
   agent {
         kubernetes {
-            label mylabel
             defaultContainer "docker"
             yaml """
                 apiVersion: v1
