@@ -11,27 +11,7 @@ pipeline{
   agent {
         kubernetes {
             defaultContainer "docker"
-            yaml """
-                apiVersion: v1
-                kind: Pod
-                metadata:
-                labels:
-                component: ci
-                spec:
-                containers:
-                - name: docker
-                    image: jrmanes/jenkins-slave-docker:latest
-                    command:
-                    - cat
-                    tty: true
-                    resources:
-                    limits:
-                        cpu: 100m
-                        memory: 600Mi
-                    requests:
-                        cpu: 100m
-                        memory: 300Mi
-        """
+            yaml getAgent()
         }
   }
     stages{
@@ -115,15 +95,13 @@ def callJob(String branch) {
         ]
 }
 
-
 def getAgent(){
 agent =  """
 apiVersion: v1
 kind: Pod
 metadata:
 labels:
-  #name: jenkins-slave-docker
-  component: ci
+  name: jenkins-slave
 spec:
   # Use service account that can deploy to all namespaces
   serviceAccountName: jenkins
@@ -141,6 +119,21 @@ spec:
     - name: docker-sock-volume
       hostPath:
       path: /var/run/docker.sock
+  - name: golang
+    image: golang:1.10
+    command:
+    - cat
+    tty: true
+  - name: gcloud
+    image: gcr.io/cloud-builders/gcloud
+    command:
+    - cat
+    tty: true
+  - name: kubectl
+    image: gcr.io/cloud-builders/kubectl
+    command:
+    - cat
+    tty: true
 """
 return agent
 }
