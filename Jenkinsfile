@@ -15,15 +15,15 @@ pipeline{
                 containers:
                 - name: docker
                   image: jrmanes/jenkins-slave-docker:latest
-                    workingDir: /home/jenkins
-                    volumeMounts:
-                   - name: docker-sock-volume
+                  workingDir: /home/jenkins
+                  volumeMounts:
+                  - name: docker-sock-volume
                     mountPath: /var/run/docker.sock
-                    command:
-                    - cat
-                    tty: true
-                    volumes:
-                    - name: docker-sock-volume
+                  command:
+                  - cat
+                  tty: true
+                  volumes:
+                  - name: docker-sock-volume
                     hostPath:
                     path: /var/run/docker.sock
                     resources:
