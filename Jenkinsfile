@@ -1,4 +1,4 @@
-def letsgoLabel = "${PROJECT_NAME}:-${UUID.randomUUID().toString()}"
+def letsgoLabel = "worker-${UUID.randomUUID().toString()}"
 
 pipeline{
     environment {
