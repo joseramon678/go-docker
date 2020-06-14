@@ -5,35 +5,7 @@ pipeline{
         kubernetes {
             label mylabel
             defaultContainer 'docker'
-            yaml """
-                apiVersion: v1
-                kind: Pod
-                metadata:
-                labels:
-                    component: ci
-                spec:
-                    containers:
-                    - name: docker
-                    image: jrmanes/jenkins-slave-docker:latest
-                    workingDir: /home/jenkins
-                    volumeMounts:
-                    - name: docker-sock-volume
-                        mountPath: /var/run/docker.sock
-                    command:
-                    - cat
-                    tty: true
-                    volumes:
-                    - name: docker-sock-volume
-                        hostPath:
-                        path: /var/run/docker.sock
-                        resources:
-                        limits:
-                            cpu: 100m
-                            memory: 600Mi
-                        requests:
-                            cpu: 100m
-                            memory: 300Mi
-            """
+            yaml getAgent()
         }
   }    
   environment {
