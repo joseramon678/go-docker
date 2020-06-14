@@ -12,14 +12,10 @@ pipeline {
         labels:
           component: ci
         spec:
-          serviceAccountName: jenkins
           containers:
-          - name: docker
+          - name: ubuntu
+            #image: gcr.io/cloud-builders/kubectl
             image: jrmanes/jenkins-slave-docker:latest
-            workingDir: /home/jenkins
-            volumeMounts:
-            - name: docker-sock-volume
-            mountPath: /var/run/docker.sock
             command:
             - cat
             tty: true
