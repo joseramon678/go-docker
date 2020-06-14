@@ -1,19 +1,47 @@
-def letsgoLabel = "worker-${UUID.randomUUID().toString()}"
+def mylabel = "worker-${UUID.randomUUID().toString()}"
 
 pipeline{
-    environment {
+  agent {
+        kubernetes {
+            label mylabel
+            defaultContainer 'docker'
+            yaml """
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                labels:
+                    component: ci
+                spec:
+                containers:
+                - name: docker
+                    image: jrmanes/jenkins-slave-docker:latest
+                    workingDir: /home/jenkins
+                    volumeMounts:
+                    - name: docker-sock-volume
+                    mountPath: /var/run/docker.sock
+                    command:
+                    - cat
+                    tty: true
+                    volumes:
+                    - name: docker-sock-volume
+                    hostPath:
+                    path: /var/run/docker.sock
+                    resources:
+                    limits:
+                        cpu: 100m
+                        memory: 600Mi
+                    requests:
+                        cpu: 100m
+                        memory: 300Mi
+            """
+        }
+  }    
+  environment {
         PROJECT_NAME = "letsgo"
         COMMIT = sh (script: "git rev-parse --short HEAD", returnStdout: true)
         BRANCH = "${env.BRANCH_NAME}"
         REGISTRY = "jrmanes"
     }
-  agent {
-        kubernetes {
-            label letsgoLabel
-            defaultContainer "docker"
-            yaml getAgent()
-        }
-  }
     stages{
         stage('\u2600 Build') {
             steps{
