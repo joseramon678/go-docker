@@ -1,10 +1,11 @@
 def mylabel = "worker-${UUID.randomUUID().toString()}"
 
 pipeline {
+
   agent {
     kubernetes {
       label mylabel
-      defaultContainer 'ubuntu'
+      defaultContainer 'docker'
       yaml """
         apiVersion: v1
         kind: Pod
@@ -13,9 +14,8 @@ pipeline {
           component: ci
         spec:
           containers:
-          - name: ubuntu
-            #image: gcr.io/cloud-builders/kubectl
-            image: jrmanes/jenkins-slave-docker:latest
+          - name: docker
+            image: gcr.io/cloud-builders/kubectl
             command:
             - cat
             tty: true
@@ -36,7 +36,8 @@ pipeline {
         BRANCH = "${env.BRANCH_NAME}"
         REGISTRY = "jrmanes"
     }
-    stages{
+  stages {
+
         stage('\u2600 Build') {
             steps{
                 echo "******************* '${STAGE_NAME}' ... ******************"
@@ -73,20 +74,22 @@ pipeline {
                 }
             }
         }
-        
-    }
-    post{
-        always{
-            echo "==============="
+        post{
+            always{
+                echo "==============="
+            }
+            success{
+                echo "========pipeline executed successfully ========"
+            }
+            failure{
+                echo "========pipeline execution failed========"
+            }
         }
-        success{
-            echo "========pipeline executed successfully ========"
-        }
-        failure{
-            echo "========pipeline execution failed========"
-        }
-    }
+
+  }
+
 }
+
 
 ////////////////////////////////////
 // Functions
