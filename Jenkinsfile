@@ -1,7 +1,6 @@
+def letsgoLabel = "${PROJECT_NAME}:-${UUID.randomUUID().toString()}"
+
 pipeline{
-    // agent{
-    //     label "jenkins-slave-docker"
-    // }
     environment {
         PROJECT_NAME = "letsgo"
         COMMIT = sh (script: "git rev-parse --short HEAD", returnStdout: true)
@@ -10,7 +9,7 @@ pipeline{
     }
   agent {
         kubernetes {
-            label "jenkins-slave-docker"
+            label letsgoLabel
             defaultContainer "docker"
             yaml getAgent()
         }
@@ -102,7 +101,7 @@ apiVersion: v1
 kind: Pod
 metadata:
 labels:
-  name: jenkins-slave2
+  component: ci
 spec:
   # Use service account that can deploy to all namespaces
   serviceAccountName: jenkins
@@ -122,11 +121,6 @@ spec:
       path: /var/run/docker.sock
   - name: golang
     image: golang:1.10
-    command:
-    - cat
-    tty: true
-  - name: gcloud
-    image: gcr.io/cloud-builders/gcloud
     command:
     - cat
     tty: true
