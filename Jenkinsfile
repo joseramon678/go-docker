@@ -23,10 +23,10 @@ pipeline {
             command:
             - cat
             tty: true
-           volumes:
-            - name: docker-sock-volume
-            hostPath:
-            path: /var/run/docker.sock 
+            volumes:
+                - name: docker-sock-volume
+                hostPath:
+                path: /var/run/docker.sock 
             resources:
               limits:
                 cpu: 100m
