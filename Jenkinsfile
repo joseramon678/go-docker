@@ -10,7 +10,7 @@ pipeline{
     }
   agent {
         kubernetes {
-            label "jenkins-slave2"
+            label "jenkins-slave-docker"
             defaultContainer "docker"
             yaml getAgent()
         }
