@@ -14,10 +14,10 @@ pipeline{
                 spec:
                 containers:
                 - name: docker
-                    image: jrmanes/jenkins-slave-docker:latest
+                  image: jrmanes/jenkins-slave-docker:latest
                     workingDir: /home/jenkins
                     volumeMounts:
-                    - name: docker-sock-volume
+                   - name: docker-sock-volume
                     mountPath: /var/run/docker.sock
                     command:
                     - cat
