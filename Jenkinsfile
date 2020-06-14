@@ -15,10 +15,18 @@ pipeline {
         spec:
           containers:
           - name: docker
-            image: gcr.io/cloud-builders/kubectl
+            image: jrmanes/jenkins-slave-docker:latest
+            workingDir: /home/jenkins
+            volumeMounts:
+            - name: docker-sock-volume
+              mountPath: /var/run/docker.sock
             command:
             - cat
             tty: true
+           volumes:
+            - name: docker-sock-volume
+            hostPath:
+            path: /var/run/docker.sock 
             resources:
               limits:
                 cpu: 100m
